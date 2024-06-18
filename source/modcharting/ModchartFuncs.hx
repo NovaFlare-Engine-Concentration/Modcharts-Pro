@@ -24,18 +24,16 @@ using StringTools;
 //for lua and hscript
 class ModchartFuncs
 {
-    var Luanb:FunkinLua;
     public static function loadLuaFunctions()
     {
         #if PSYCH
-        Luanb = new FunkinLua();
         #if LUA_ALLOWED
         //for (funkin in Luanb)
         //{
             #if hscript
-            Luanb.initHaxeModule();
+            initHaxeModule();
             #end
-            Lua_helper.add_callback(Luanb.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
+            Lua_helper.add_callback(lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                 startMod(name,modClass,type,pf);
 
                 PlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
