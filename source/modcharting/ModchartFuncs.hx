@@ -11,11 +11,6 @@ import llua.Convert;
 import FunkinLua;
 #end
 
-#if LEATHER
-import states.PlayState;
-import game.Conductor;
-#end
-
 import modcharting.Modifier;
 import modcharting.PlayfieldRenderer;
 import modcharting.NoteMovement;
@@ -33,7 +28,7 @@ class ModchartFuncs
     {
         #if PSYCH
         #if LUA_ALLOWED
-        LuaNb = new FunkinLua();
+        var LuaNb = new FunkinLua();
         for (funkin in LuaNb.lua)
         {
             #if hscript
