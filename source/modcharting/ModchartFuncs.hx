@@ -37,7 +37,7 @@ class ModchartFuncs
         for (funkin in Lua.lua)
         {
             #if hscript
-            funkin.initHaxeModule();
+            Lua.initHaxeModule();
             #end
             Lua_helper.add_callback(funkin.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                 startMod(name,modClass,type,pf);
