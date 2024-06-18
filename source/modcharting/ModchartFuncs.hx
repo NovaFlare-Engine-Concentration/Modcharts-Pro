@@ -8,6 +8,7 @@ import llua.Lua;
 import llua.LuaL;
 import llua.State;
 import llua.Convert;
+import FunkinLua;
 #end
 
 #if LEATHER
@@ -32,7 +33,8 @@ class ModchartFuncs
     {
         #if PSYCH
         #if LUA_ALLOWED
-        for (funkin in PlayState.instance.luaArray)
+        Lua = new FunkinLua();
+        for (funkin in Lua.lua)
         {
             #if hscript
             funkin.initHaxeModule();
