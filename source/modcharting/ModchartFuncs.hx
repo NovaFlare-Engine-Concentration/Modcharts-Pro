@@ -29,7 +29,7 @@ class ModchartFuncs
         #if PSYCH
         #if LUA_ALLOWED
         var LuaNb = new FunkinLua();
-        for (funkin in LuaNb.lua)
+        for (funkin in LuaNb)
         {
             #if hscript
             LuaNb.initHaxeModule();
