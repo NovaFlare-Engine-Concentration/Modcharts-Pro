@@ -33,11 +33,11 @@ class ModchartFuncs
     {
         #if PSYCH
         #if LUA_ALLOWED
-        Lua = new FunkinLua();
-        for (funkin in Lua.lua)
+        LuaNb = new FunkinLua();
+        for (funkin in LuaNb.lua)
         {
             #if hscript
-            Lua.initHaxeModule();
+            LuaNb.initHaxeModule();
             #end
             Lua_helper.add_callback(funkin.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                 startMod(name,modClass,type,pf);
