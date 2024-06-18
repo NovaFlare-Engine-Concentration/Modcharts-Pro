@@ -73,7 +73,7 @@ class ModchartFuncs
                 ease(beat, time, easeStr, argsAsString);
                 
             });
-        }
+       // }
         #end
         #if hscript
         if (FunkinLua.hscript != null)
