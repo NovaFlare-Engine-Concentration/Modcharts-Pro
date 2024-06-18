@@ -389,9 +389,9 @@ class ModchartEditorState extends MusicBeatState
         //strumLineNotes.cameras = [camHUD];
 		//notes.cameras = [camHUD];
   
-        #if ("flixel-addons" >= "3.0.0")
+        #if windows
         grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, FlxG.width, gridSize)), FlxAxes.X, 0, 0);
-        #else 
+        #elseif android
         grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, FlxG.width, gridSize)), 0, 0, true, false);
         #end
         add(grid);
