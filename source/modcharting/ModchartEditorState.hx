@@ -389,11 +389,11 @@ class ModchartEditorState extends MusicBeatState
         //strumLineNotes.cameras = [camHUD];
 		//notes.cameras = [camHUD];
   
-        #if windows
+        //#if windows
         grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, FlxG.width, gridSize)), FlxAxes.X, 0, 0);
-        #elseif android
+        /*#elseif android
         grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, FlxG.width, gridSize)), 0, 0, true, false);
-        #end
+        #end*/
         add(grid);
         
         for (i in 0...12)
