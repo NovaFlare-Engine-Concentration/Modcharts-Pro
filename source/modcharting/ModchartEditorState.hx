@@ -64,9 +64,9 @@ import states.LoadingState;
 import states.MusicBeatState;
 import substates.MusicBeatSubstate;
 #else
-import Section.SwagSection;
-import Song.SwagSong;
-import MusicBeatSubstate;
+import backend.songs.Section.SwagSection;
+import backend.songs.Song.SwagSong;
+import backend.MusicBeatSubstate;
 #end
 
 
