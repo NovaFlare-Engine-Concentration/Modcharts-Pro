@@ -5,14 +5,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 import flixel.FlxG;
 
-#if LEATHER
-import states.PlayState;
-import game.Note;
-
-#else 
-import PlayState;
-import Note;
-#end
+import states.game.PlayState;
+import obj.Note;
 
 using StringTools;
 
