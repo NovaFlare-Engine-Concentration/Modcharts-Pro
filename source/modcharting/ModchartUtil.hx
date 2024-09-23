@@ -6,14 +6,9 @@ import flixel.math.FlxAngle;
 import openfl.geom.Vector3D;
 import flixel.FlxG;
 
-#if LEATHER
-import states.PlayState;
-import game.Note;
-import game.Conductor;
-#else 
-import PlayState;
-import Note;
-#end
+
+import states.game.PlayState;
+import obj.Note;
 
 using StringTools;
 
