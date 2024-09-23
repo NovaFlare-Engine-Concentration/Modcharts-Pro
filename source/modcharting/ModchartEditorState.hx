@@ -50,24 +50,10 @@ import flixel.addons.ui.FlxUITabMenu;
 import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 
 
-#if LEATHER
-import states.PlayState;
-import game.Song;
-import game.Section.SwagSection;
-import game.Note;
-import ui.FlxUIDropDownMenuCustom;
-import game.Conductor;
-import utilities.CoolUtil;
-import game.StrumNote;
-import utilities.NoteVariables;
-import states.LoadingState;
-import states.MusicBeatState;
-import substates.MusicBeatSubstate;
-#else
+
 import backend.songs.Section.SwagSection;
 import backend.songs.Song.SwagSong;
 import backend.MusicBeatSubstate;
-#end
 
 
 import modcharting.*;
