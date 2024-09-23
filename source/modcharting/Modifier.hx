@@ -4,15 +4,8 @@ import flixel.tweens.FlxEase;
 import flixel.math.FlxMath;
 import flixel.FlxG;
 
-#if LEATHER
-import states.PlayState;
-import game.Note;
-import game.StrumNote;
-import game.Conductor;
-#else 
-import PlayState;
-import Note;
-#end
+import states.game.PlayState;
+import obj.Note;
 
 enum ModifierType
 {
