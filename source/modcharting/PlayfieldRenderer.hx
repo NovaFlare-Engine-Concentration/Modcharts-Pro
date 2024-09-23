@@ -18,15 +18,9 @@ import flixel.FlxG;
 import modcharting.Modifier;
 import flixel.system.FlxAssets.FlxShader;
 
-#if LEATHER
-import states.PlayState;
-import game.Note;
-import game.StrumNote;
-import game.Conductor;
-#else 
-import PlayState;
-import Note;
-#end
+import states.game.PlayState;
+import obj.Note;
+
 
 using StringTools;
 
