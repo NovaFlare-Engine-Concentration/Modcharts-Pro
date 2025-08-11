@@ -41,7 +41,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 {
     public var strumGroup:FlxTypedGroup<StrumNoteType>;
     public var notes:FlxTypedGroup<Note>;
-    public var instance:PlayfieldRenderer;
+    //public var instance:PlayfieldRenderer;
     public var playStateInstance:PlayState;
     public var playfields:Array<Playfield> = []; //adding an extra playfield will add 1 for each player
 
@@ -67,7 +67,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         super(0,0);
         this.strumGroup = strumGroup;
         this.notes = notes;
-        this.instance = instance;
+        //this.instance = instance;
         if (Std.isOfType(instance, PlayState))
             playStateInstance = cast instance; //so it just casts once
 
