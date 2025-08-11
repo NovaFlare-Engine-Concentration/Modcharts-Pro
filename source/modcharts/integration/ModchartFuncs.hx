@@ -26,7 +26,7 @@ import openfl.events.IOErrorEvent;
 using StringTools;
 
 //for lua and hscript
-class ModchartFuncs
+class ModchartFuncs extends FunkinLua
 {
     public static function loadLuaFunctions(funk:FunkinLua)
     {
