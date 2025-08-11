@@ -51,8 +51,8 @@ import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 
 
 
-import backend.songs.Section.SwagSection;
-import backend.songs.Song.SwagSong;
+import backend.Section.SwagSection;
+import backend.Song.SwagSong;
 import backend.MusicBeatSubstate;
 
 
