@@ -15,10 +15,8 @@ import modcharts.modifiers.Modifier;
 import modcharts.engine.PlayfieldRenderer;
 import modcharts.integration.NoteMovement;
 import modcharts.integration.ModchartUtil;
-import modcharts.engine.ModchartFile;
 import modcharts.math.NotePositionData;
-import modcharts.modifiers.EaseCurveModifier;
-import modcharts.integration.ModchartMusicBeatState;
+import modcharts.modifiers.Modifier.EaseCurveModifier;
 
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
@@ -66,7 +64,7 @@ class ModchartFuncs extends FunkinLua
                 setModEaseFunc(name,ease);
             });
             set('set', function(beat:Float, argsAsString:String){
-                set(beat, argsAsString);
+                setV(beat, argsAsString);
             });
             set('ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
 
@@ -174,7 +172,7 @@ class ModchartFuncs extends FunkinLua
             }
         }
     }
-    public static function set(beat:Float, argsAsString:String, ?instance:states.PlayState = null)
+    public static function setP(beat:Float, argsAsString:String, ?instance:states.PlayState = null)
     {
         var args = argsAsString.trim().replace(' ', '').split(',');
 
