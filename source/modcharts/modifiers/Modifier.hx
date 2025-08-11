@@ -4,6 +4,8 @@ import flixel.tweens.FlxEase;
 import flixel.math.FlxMath;
 import flixel.FlxG;
 import modcharts.engine.*;
+import modcharts.math.*;
+import modcharts.integration.*;
 import states.PlayState;
 import objects.Note;
 
