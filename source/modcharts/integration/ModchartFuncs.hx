@@ -24,49 +24,49 @@ import openfl.events.IOErrorEvent;
 using StringTools;
 
 //for lua and hscript
-class ModchartFuncs extends FunkinLua
+class ModchartFuncs
 {
-    public static function loadLuaFunctions()
+    public static function loadLuaFunctions(funk:FunkinLua)
     {
         #if LUA_ALLOWED
         //for (funkin in Luanb)
         //{
-            set('startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
+            funk.set('startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                 startMod(name,modClass,type,pf);
 
                 PlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
             });
-            set('setMod', function(name:String, value:Float){
+            funk.set('setMod', function(name:String, value:Float){
                 setMod(name, value);
             });
-            set('setSubMod', function(name:String, subValName:String, value:Float){
+            funk.set('setSubMod', function(name:String, subValName:String, value:Float){
                 setSubMod(name, subValName,value);
             });
-            set('setModTargetLane', function(name:String, value:Int){
+            funk.set('setModTargetLane', function(name:String, value:Int){
                 setModTargetLane(name, value);
             });
-            set('setModPlayfield', function(name:String, value:Int){
+            funk.set('setModPlayfield', function(name:String, value:Int){
                 setModPlayfield(name,value);
             });
-            set('addPlayfield', function(?x:Float = 0, ?y:Float = 0, ?z:Float = 0){
+            funk.set('addPlayfield', function(?x:Float = 0, ?y:Float = 0, ?z:Float = 0){
                 addPlayfield(x,y,z);
             });
-            set('removePlayfield', function(idx:Int){
+            funk.set('removePlayfield', function(idx:Int){
                 removePlayfield(idx);
             });
-            set('tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
+            funk.set('tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
                 tweenModifier(modifier,val,time,ease);
             });
-            set('tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
+            funk.set('tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
                 tweenModifierSubValue(modifier,subValue,val,time,ease);
             });
-            set('setModEaseFunc', function(name:String, ease:String){
+            funk.set('setModEaseFunc', function(name:String, ease:String){
                 setModEaseFunc(name,ease);
             });
-            set('set', function(beat:Float, argsAsString:String){
-                setV(beat, argsAsString);
+            funk.set('set', function(beat:Float, argsAsString:String){
+                set(beat, argsAsString);
             });
-            set('ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+            funk.set('ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
 
                 ease(beat, time, easeStr, argsAsString);
                 
@@ -172,7 +172,7 @@ class ModchartFuncs extends FunkinLua
             }
         }
     }
-    public static function setP(beat:Float, argsAsString:String, ?instance:states.PlayState = null)
+    public static function set(beat:Float, argsAsString:String, ?instance:states.PlayState = null)
     {
         var args = argsAsString.trim().replace(' ', '').split(',');
 
