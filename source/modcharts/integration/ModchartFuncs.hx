@@ -28,12 +28,11 @@ using StringTools;
 //for lua and hscript
 class ModchartFuncs extends FunkinLua
 {
-    public static function loadLuaFunctions(funk:FunkinLua)
+    public static function loadLuaFunctions()
     {
         #if LUA_ALLOWED
         //for (funkin in Luanb)
         //{
-            var lua = funk.lua;
             set('startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                 startMod(name,modClass,type,pf);
 
