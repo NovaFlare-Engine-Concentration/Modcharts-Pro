@@ -128,7 +128,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var strumZ = 0;
         var strumScaleX = NoteMovement.defaultScale[i];
         var strumScaleY = NoteMovement.defaultScale[i];
-        if (ModchartUtil.getIsPixelStage(instance))
+        if (ModchartUtil.getIsPixelStage(playStateInstance))
         {
             //work on pixel stages
             strumScaleX = 1*PlayState.daPixelZoom;
@@ -165,7 +165,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var noteAlpha:Float = 1;
         noteAlpha = notes.members[noteIndex].multAlpha;
 
-        if (ModchartUtil.getIsPixelStage(instance))
+        if (ModchartUtil.getIsPixelStage(playStateInstance))
         {
             //work on pixel stages
             noteScaleX = 1*PlayState.daPixelZoom;
@@ -182,7 +182,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
     private function getNoteCurPos(noteIndex:Int, strumTimeOffset:Float = 0)
     {
-        if (notes.members[noteIndex].isSustainNote && ModchartUtil.getDownscroll(instance))
+        if (notes.members[noteIndex].isSustainNote && ModchartUtil.getDownscroll(playStateInstance))
             strumTimeOffset -= Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); //psych does this to fix its sustains but that breaks the visuals so basically reverse it back to normal
 
         var distance = (Conductor.songPosition - notes.members[noteIndex].strumTime) + strumTimeOffset;
@@ -195,7 +195,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     private function getNoteDist(noteIndex:Int)
     {
         var noteDist = -0.45;
-        if (ModchartUtil.getDownscroll(instance))
+        if (ModchartUtil.getDownscroll(playStateInstance))
             noteDist *= -1;
         return noteDist;
     }
@@ -342,12 +342,12 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
         if (noteData.noteDist > 0) //downscroll
         {
-            if (!ModchartUtil.getDownscroll(instance)) //fix reverse
+            if (!ModchartUtil.getDownscroll(playStateInstance)) //fix reverse
                 flipGraphic = true;
         }
         else
         {
-            if (ModchartUtil.getDownscroll(instance))
+            if (ModchartUtil.getDownscroll(playStateInstance))
                 flipGraphic = true;
         }
         //render that shit
