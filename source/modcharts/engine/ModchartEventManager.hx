@@ -5,9 +5,7 @@ import modcharts.engine.ModchartEvent;
 import modcharts.modifiers.Modifier;
 import modcharts.integration.ModchartUtil;
 
-#if LEATHER
-import game.Conductor;
-#end
+import backend.Conductor;
 
 class ModchartEventManager
 {
