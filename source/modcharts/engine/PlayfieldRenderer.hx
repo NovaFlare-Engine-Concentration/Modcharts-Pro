@@ -41,7 +41,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 {
     public var strumGroup:FlxTypedGroup<StrumNoteType>;
     public var notes:FlxTypedGroup<Note>;
-    public var instance:ModchartMusicBeatState;
+    public var instance:PlayfieldRenderer;
     public var playStateInstance:PlayState;
     public var playfields:Array<Playfield> = []; //adding an extra playfield will add 1 for each player
 
@@ -63,7 +63,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     }
 
 
-    public function new(strumGroup:FlxTypedGroup<StrumNoteType>, notes:FlxTypedGroup<Note>,instance:ModchartMusicBeatState) 
+    public function new(strumGroup:FlxTypedGroup<StrumNoteType>, notes:FlxTypedGroup<Note>,instance:PlayState) 
     {
         super(0,0);
         this.strumGroup = strumGroup;
