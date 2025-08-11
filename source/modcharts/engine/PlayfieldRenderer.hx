@@ -415,16 +415,4 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         return 1.0; 
     }
 
-    override public function destroy()
-    {
-        if (modchart != null)
-        {
-            for (customMod in modchart.customModifiers)
-            {
-                customMod.destroy(); //make sure the interps are dead
-            }
-        }
-        super.destroy();
-    }
-
 }
