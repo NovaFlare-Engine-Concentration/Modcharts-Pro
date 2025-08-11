@@ -5,9 +5,6 @@ import flixel.tweens.FlxTween;
 import modcharts.core.Modifier;
 import modcharts.transform.NoteTransform;
 import modcharts.render.GPURenderSystem;
-#if LEATHER
-import game.Conductor;
-#end
 
 class ModifierManager
 {
@@ -254,4 +251,5 @@ class ModifierManager
         getMod("sudden").subValues.set("mult", new Modifier.ModifierSubValue(1));
         getMod("vanish").subValues.set("mult", new Modifier.ModifierSubValue(1));
     }
+
 }
