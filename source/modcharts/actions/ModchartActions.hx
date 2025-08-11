@@ -14,7 +14,9 @@ import modcharts.core.Modifier;
 import modcharts.systems.PlayfieldSystem;
 import modcharts.transform.NoteTransform;
 import modcharts.utils.ModchartHelper;
+import modcharts.utils.ModchartGPUHelper;
 import modcharts.systems.*;
+import modcharts.render.GPURenderSystem;
 
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
@@ -85,6 +87,12 @@ class ModchartActions
                 }
             }
         }
+        
+        // 如果使用GPU渲染，确保GPU渲染系统已更新
+        if (renderer.modifierTable.useGPU && renderer.modifierTable.gpuRenderer != null)
+        {
+            renderer.modifierTable.gpuRenderer.enabled = true;
+        }
     }
 
     public static function setMod(name:String, value:Float, ?subValName:String = '', ?instance:Dynamic)
@@ -114,6 +122,13 @@ class ModchartActions
                 if (mod.modClass != '' && renderer.modchart != null && renderer.modchart.customModifiers.exists(mod.modClass))
                     renderer.modchart.customModifiers.get(mod.modClass).call('set', [name, value]);
             }
+        }
+        
+        // 如果使用GPU渲染，更新GPU渲染系统的状态
+        if (renderer.modifierTable.useGPU && renderer.modifierTable.gpuRenderer != null)
+        {
+            // 触发GPU渲染系统更新
+            renderer.modifierTable.gpuRenderer.enabled = true;
         }
     }
 

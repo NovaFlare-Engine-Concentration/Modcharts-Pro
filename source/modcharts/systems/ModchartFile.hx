@@ -23,6 +23,7 @@ import modcharts.data.*;
 import modcharts.events.*;
 import modcharts.managers.*;
 import modcharts.utils.*;
+import modcharts.render.GPURenderSystem;
 using StringTools;
 
 typedef ModchartJson =
@@ -65,6 +66,15 @@ class ModchartFile
         data = loadFromJson(PlayState.SONG.song.toLowerCase());
         this.renderer = renderer;
         renderer.modchart = this;
+        
+        // 初始化GPU支持
+        if (renderer.modifierTable.gpuRenderer != null)
+        {
+            var gpuRenderer = renderer.modifierTable.gpuRenderer;
+            // 启用GPU缓存，但保留原始位图数据以供modchart使用
+            gpuRenderer.setGPUCacheEnabled(true);
+        }
+        
         loadPlayfields();
         loadModifiers();
         loadEvents();
@@ -152,6 +162,13 @@ class ModchartFile
                 ModchartActions.setModTargetLane(i[MOD_NAME], i[MOD_LANE], renderer.instance);
         }
         renderer.modifierTable.reconstructTable();
+        
+        // 在加载修饰符后，确保GPU渲染系统已正确初始化
+        if (renderer.modifierTable.gpuRenderer != null && renderer.modifierTable.useGPU)
+        {
+            var gpuRenderer = renderer.modifierTable.gpuRenderer;
+            trace("GPU渲染系统已初始化，当前状态: " + (gpuRenderer.enabled ? "启用" : "禁用"));
+        }
     }
 
     public function loadPlayfields()

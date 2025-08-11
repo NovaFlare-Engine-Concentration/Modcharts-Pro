@@ -4,6 +4,7 @@ import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import modcharts.core.Modifier;
 import modcharts.transform.NoteTransform;
+import modcharts.render.GPURenderSystem;
 #if LEATHER
 import game.Conductor;
 #end
@@ -13,6 +14,8 @@ class ModifierManager
     public var modifiers:Map<String, Modifier> = new Map<String, Modifier>();
     private var instance:ModchartMusicBeatState = null;
     private var renderer:PlayfieldSystem = null;
+    public var gpuRenderer:GPURenderSystem = null;
+    public var useGPU:Bool = true;
 
     //The table is used to precalculate all the playfield and lane checks on each modifier,
     //so it should end up with a lot less loops and if checks each frame
@@ -23,6 +26,19 @@ class ModifierManager
     {
         this.instance = instance;
         this.renderer = renderer;
+        
+        // 初始化GPU渲染系统
+        if (GPURenderSystem.isGPUSupported())
+        {
+            gpuRenderer = new GPURenderSystem();
+            useGPU = gpuRenderer.enabled;
+        }
+        else
+        {
+            useGPU = false;
+            trace("GPU渲染不可用，将使用CPU渲染");
+        }
+        
         loadDefaultModifiers();
         reconstructTable();
     }
@@ -46,6 +62,12 @@ class ModifierManager
         modifiers.clear();
 
         loadDefaultModifiers();
+        
+        // 清除GPU缓存
+        if (gpuRenderer != null)
+        {
+            gpuRenderer.clearCache();
+        }
     }
 
     public function resetMods() : Void
@@ -96,7 +118,16 @@ class ModifierManager
         if (noteData.playfieldIndex >= table.length || noteData.lane >= table[0].length)
             return [];
 
-        return table[noteData.playfieldIndex][noteData.lane];
+        var mods = table[noteData.playfieldIndex][noteData.lane];
+        
+        // 如果使用GPU渲染，更新变换数据
+        if (useGPU && gpuRenderer != null)
+        {
+            var noteDataArray:Array<NoteTransformData> = [noteData];
+            gpuRenderer.updateTransforms(noteDataArray);
+        }
+        
+        return mods;
     }
 
     public function getModsForPlayfield(pf:Int) : Array<Modifier>
