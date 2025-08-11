@@ -11,7 +11,7 @@ import modcharts.math.NotePositionData;
 import modcharts.integration.ModchartUtil;
 import states.PlayState;
 import objects.Note;
-import objects.Conductor;
+import backend.Conductor;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -200,7 +200,7 @@ class ModchartFile
 
 class CustomModifierScript
 {
-    public var interp:Interp = null;
+    public var interp:Interp;
     var script:Expr;
     var parser:Parser;
     public function new(scriptStr:String)
