@@ -7,7 +7,7 @@ import llua.Lua;
 import llua.LuaL;
 import llua.State;
 import llua.Convert;
-import psych.script.FunkinLua;
+import psychlua.FunkinLua;
 #end
 
 import modcharts.core.Modifier;
@@ -28,7 +28,6 @@ class ModchartActions
 {
     public static function loadLuaFunctions(funk:FunkinLua)
     {
-        #if PSYCH
         #if LUA_ALLOWED
         //for (funkin in Luanb)
         //{
@@ -56,7 +55,6 @@ class ModchartActions
             Lua_helper.add_callback(lua, 'set', function(beat:Float, modName:String, value:Float = 0, ?type:String = '', ?pf:Int = -1, ?lane:Int = -1){
                 set(beat, [modName, value, type, pf, lane], PlayState.instance);
             });
-        #end
         #end
     }
 
@@ -250,4 +248,5 @@ class ModchartActions
             default: return ALL;
         }
     }
+
 }
