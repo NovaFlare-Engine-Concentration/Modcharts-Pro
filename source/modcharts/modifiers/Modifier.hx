@@ -3,7 +3,7 @@ package modcharts.modifiers;
 import flixel.tweens.FlxEase;
 import flixel.math.FlxMath;
 import flixel.FlxG;
-
+import modcharts.engine.*;
 import states.PlayState;
 import objects.Note;
 
