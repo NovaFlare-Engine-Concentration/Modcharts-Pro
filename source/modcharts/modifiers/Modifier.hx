@@ -4,8 +4,8 @@ import flixel.tweens.FlxEase;
 import flixel.math.FlxMath;
 import flixel.FlxG;
 
-import states.game.PlayState;
-import obj.Note;
+import states.PlayState;
+import objects.Note;
 
 enum ModifierType
 {
