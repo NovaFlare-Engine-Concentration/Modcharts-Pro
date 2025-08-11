@@ -33,7 +33,7 @@ class ModchartUtil
     }
 
 
-    public static function getIsPixelStage(instance:ModchartMusicBeatState)
+    public static function getIsPixelStage(instance:states.PlayState)
     {
         if (instance == null)
             return false;
