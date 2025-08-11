@@ -14,13 +14,13 @@ using StringTools;
 
 class ModchartUtil
 {
-    public static function getDownscroll(instance:PlayfieldRenderer)
+    public static function getDownscroll(instance:PlayState)
     {
         //need to test each engine
         //not expecting all to work
         return ClientPrefs.data.downScroll;
     }
-    public static function getMiddlescroll(instance:PlayfieldRenderer)
+    public static function getMiddlescroll(instance:PlayState)
     {
         return ClientPrefs.data.middleScroll;
     }
@@ -33,7 +33,7 @@ class ModchartUtil
     }
 
 
-    public static function getIsPixelStage(instance:PlayfieldRenderer)
+    public static function getIsPixelStage(instance:PlayState)
     {
         if (instance == null)
             return false;
