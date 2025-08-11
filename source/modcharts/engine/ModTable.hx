@@ -4,9 +4,7 @@ import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import modcharts.modifiers.Modifier;
 import modcharts.math.NotePositionData;
-#if LEATHER
-import game.Conductor;
-#end
+import backend.Conductor;
 
 class ModTable
 {
