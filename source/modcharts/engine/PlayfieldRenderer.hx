@@ -49,7 +49,6 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     public var modifierTable:ModTable;
     public var tweenManager:FlxTweenManager;
 
-    public var modchart:ModchartFile;
     public var inEditor:Bool = false;
     public var editorPaused:Bool = false;
 
@@ -82,7 +81,6 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         eventManager = new ModchartEventManager(this);
         modifierTable = new ModTable(instance, this);
         addNewPlayfield(0,0,0);
-        modchart = new ModchartFile(this);
     }
 
 
