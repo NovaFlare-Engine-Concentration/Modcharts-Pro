@@ -79,29 +79,6 @@ class ModchartFuncs extends FunkinLua
 
     public static function startMod(name:String, modClass:String, type:String = '', pf:Int = -1, ?instance:states.PlayState = null)
     {
-        if (instance == null)
-        {
-            instance = PlayState.instance;
-            if (instance.playfieldRenderer.modchart.scriptListen)
-            {
-                instance.playfieldRenderer.modchart.data.modifiers.push([name, modClass, type, pf]);
-            }
-        }
-
-        if (instance.playfieldRenderer.modchart.customModifiers.exists(modClass))
-        {
-            var modifier = new Modifier(name, getModTypeFromString(type), pf);
-            if (instance.playfieldRenderer.modchart.customModifiers.get(modClass).interp != null)
-                instance.playfieldRenderer.modchart.customModifiers.get(modClass).interp.variables.set('instance', instance);
-            instance.playfieldRenderer.modchart.customModifiers.get(modClass).initMod(modifier); //need to do it this way instead because using current value in the modifier script didnt work
-            //var modifier = instance.playfieldRenderer.modchart.customModifiers.get(modClass).copy();
-            //modifier.tag = name; //set correct stuff because its copying shit
-            //modifier.playfield = pf;
-            //modifier.type = getModTypeFromString(type);
-            instance.playfieldRenderer.modifierTable.add(modifier);
-            return;
-        }
-
         var mod = Type.resolveClass('modcharts.modifiers.'+modClass);
         if (mod == null) {mod = Type.resolveClass('modcharts.modifiers.'+modClass+"Modifier");} //dont need to add "Modifier" to the end of every mod
 
@@ -131,10 +108,6 @@ class ModchartFuncs extends FunkinLua
     {
         if (instance == null)
             instance = PlayState.instance;
-        if (instance.playfieldRenderer.modchart.scriptListen)
-        {
-            instance.playfieldRenderer.modchart.data.events.push(["set", [0, value+","+name]]);
-        }
         if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
             instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue = value;
     }
@@ -142,10 +115,6 @@ class ModchartFuncs extends FunkinLua
     {
         if (instance == null)
             instance = PlayState.instance;
-        if (instance.playfieldRenderer.modchart.scriptListen)
-        {
-            instance.playfieldRenderer.modchart.data.events.push(["set", [0, value+","+name+":"+subValName]]);
-        }
         if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
             instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subValName).value = value;
     }
@@ -207,14 +176,6 @@ class ModchartFuncs extends FunkinLua
     }
     public static function set(beat:Float, argsAsString:String, ?instance:states.PlayState = null)
     {
-        if (instance == null)
-        {
-            instance = PlayState.instance;
-            if (instance.playfieldRenderer.modchart.scriptListen)
-            {
-                instance.playfieldRenderer.modchart.data.events.push(["set", [beat, argsAsString]]);
-            }
-        }
         var args = argsAsString.trim().replace(' ', '').split(',');
 
         instance.playfieldRenderer.eventManager.addEvent(beat, function(arguments:Array<String>) {
@@ -245,14 +206,6 @@ class ModchartFuncs extends FunkinLua
     }
     public static function ease(beat:Float, time:Float, ease:String, argsAsString:String, ?instance:states.PlayState = null) : Void
     {
-        if (instance == null)
-        {
-            instance = PlayState.instance;
-            if (instance.playfieldRenderer.modchart.scriptListen)
-            {
-                instance.playfieldRenderer.modchart.data.events.push(["ease", [beat, time, ease, argsAsString]]);
-            }
-        }
             
         if(Math.isNaN(time))
             time = 1;
