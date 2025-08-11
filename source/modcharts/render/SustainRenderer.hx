@@ -2,9 +2,7 @@ package modcharts.render;
 
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import openfl.geom.Vector3D;
-#if LEATHER
-import game.Note;
-#end
+import objects.Note;
 import flixel.FlxStrip;
 import modcharts.data.NoteTransformData;
 
@@ -84,4 +82,5 @@ class SustainRenderer extends FlxStrip
         }
         vertices = new DrawData(12, true, verts);
     }
+
 }
