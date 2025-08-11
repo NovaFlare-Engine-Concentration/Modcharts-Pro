@@ -6,8 +6,8 @@ import flixel.math.FlxAngle;
 import openfl.geom.Vector3D;
 import flixel.FlxG;
 
-import states.game.PlayState;
-import obj.Note;
+import states.PlayState;
+import objects.Note;
 
 using StringTools;
 
@@ -17,77 +17,29 @@ class ModchartHelper
     {
         //need to test each engine
         //not expecting all to work
-        #if PSYCH
-        return ClientPrefs.downScroll;
-        #elseif LEATHER
-        return utilities.Options.getData("downscroll");
-        #elseif ANDROMEDA //dunno why youd use this on andromeda but whatever, already got its own cool modchart system
-        return instance.currentOptions.downScroll;
-        #elseif KADE
-        return PlayStateChangeables.useDownscroll;
-        #elseif FOREVER_LEGACY //forever might not work just yet because of the multiple strumgroups
-        return Init.trueSettings.get('Downscroll');
-        #elseif FPSPLUS
-        return Config.downscroll;
-        #elseif MIC_D_UP //basically no one uses this anymore
-        return MainVariables._variables.scroll == "down"
-        #else
-        return false;
-        #end
+        return ClientPrefs.data.downScroll;
     }
 
     public static function getMiddlescroll(instance:ModchartMusicBeatState)
     {
-        #if PSYCH
-        return ClientPrefs.middleScroll;
-        #elseif LEATHER
-        return utilities.Options.getData("middlescroll");
-        #else
-        return false;
-        #end
+        return ClientPrefs.data.middleScroll;
     }
 
     public static function getScrollSpeed(game:PlayState)
     {
-        #if PSYCH
         return PlayState.songSpeed;
-        #elseif LEATHER
-        return utilities.Options.getData("scrollspeed");
-        #elseif ANDROMEDA
-        return game.currentOptions.scrollSpeed;
-        #elseif KADE
-        return PlayStateChangeables.scrollSpeed;
-        #elseif FOREVER_LEGACY
-        return Init.trueSettings.get('Scroll Speed');
-        #elseif FPSPLUS
-        return Config.scrollSpeed;
-        #elseif MIC_D_UP
-        return MainVariables._variables.scrollSpeed == "1.0";
-        #else
-        return 1.0;
-        #end
     }
 
     public static function getTimeFromBeat(beat:Float):Float
     {
-        #if LEATHER
-        var crochet = ((60 / game.Conductor.bpm) * 1000);
-        return (beat * crochet);
-        #else
         var crochet = ((60 / PlayState.instance.bpm) * 1000);
         return (beat * crochet);
-        #end
     }
 
     public static function getBeatFromTime(time:Float):Float
     {
-        #if LEATHER
-        var crochet = ((60 / game.Conductor.bpm) * 1000);
-        return (time / crochet);
-        #else
         var crochet = ((60 / PlayState.instance.bpm) * 1000);
         return (time / crochet);
-        #end
     }
 
     public static function lerp(a:Float, b:Float, ratio:Float):Float
@@ -140,4 +92,5 @@ class ModchartHelper
             default: return FlxEase.linear;
         }
     }
+
 }
