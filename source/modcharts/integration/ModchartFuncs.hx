@@ -8,7 +8,7 @@ import llua.Lua;
 import llua.LuaL;
 import llua.State;
 import llua.Convert;
-import psych.script.FunkinLua;
+import psychlua.FunkinLua;
 #end
 
 import modcharts.modifiers.Modifier;
@@ -30,47 +30,46 @@ class ModchartFuncs
 {
     public static function loadLuaFunctions(funk:FunkinLua)
     {
-        #if PSYCH
         #if LUA_ALLOWED
         //for (funkin in Luanb)
         //{
             var lua = funk.lua;
-            Lua_helper.add_callback(lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
+            set('startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                 startMod(name,modClass,type,pf);
 
                 PlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
             });
-            Lua_helper.add_callback(lua, 'setMod', function(name:String, value:Float){
+            set('setMod', function(name:String, value:Float){
                 setMod(name, value);
             });
-            Lua_helper.add_callback(lua, 'setSubMod', function(name:String, subValName:String, value:Float){
+            set('setSubMod', function(name:String, subValName:String, value:Float){
                 setSubMod(name, subValName,value);
             });
-            Lua_helper.add_callback(lua, 'setModTargetLane', function(name:String, value:Int){
+            set('setModTargetLane', function(name:String, value:Int){
                 setModTargetLane(name, value);
             });
-            Lua_helper.add_callback(lua, 'setModPlayfield', function(name:String, value:Int){
+            set('setModPlayfield', function(name:String, value:Int){
                 setModPlayfield(name,value);
             });
-            Lua_helper.add_callback(lua, 'addPlayfield', function(?x:Float = 0, ?y:Float = 0, ?z:Float = 0){
+            set('addPlayfield', function(?x:Float = 0, ?y:Float = 0, ?z:Float = 0){
                 addPlayfield(x,y,z);
             });
-            Lua_helper.add_callback(lua, 'removePlayfield', function(idx:Int){
+            set('removePlayfield', function(idx:Int){
                 removePlayfield(idx);
             });
-            Lua_helper.add_callback(lua, 'tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
+            set('tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
                 tweenModifier(modifier,val,time,ease);
             });
-            Lua_helper.add_callback(lua, 'tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
+            set('tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
                 tweenModifierSubValue(modifier,subValue,val,time,ease);
             });
-            Lua_helper.add_callback(lua, 'setModEaseFunc', function(name:String, ease:String){
+            set('setModEaseFunc', function(name:String, ease:String){
                 setModEaseFunc(name,ease);
             });
-            Lua_helper.add_callback(lua, 'set', function(beat:Float, argsAsString:String){
+            set('set', function(beat:Float, argsAsString:String){
                 set(beat, argsAsString);
             });
-            Lua_helper.add_callback(lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+            set('ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
 
                 ease(beat, time, easeStr, argsAsString);
                 
@@ -88,11 +87,6 @@ class ModchartFuncs
             FunkinLua.hscript.variables.set('NotePositionData', NotePositionData);
             FunkinLua.hscript.variables.set('ModchartFile', ModchartFile);
         }
-        #end
-
-
-        #elseif LEATHER
-
         #end
     }
 
