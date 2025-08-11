@@ -14,13 +14,13 @@ using StringTools;
 
 class ModchartUtil
 {
-    public static function getDownscroll(instance:ModchartMusicBeatState)
+    public static function getDownscroll(instance:PlayfieldRenderer)
     {
         //need to test each engine
         //not expecting all to work
         return ClientPrefs.data.downScroll;
     }
-    public static function getMiddlescroll(instance:ModchartMusicBeatState)
+    public static function getMiddlescroll(instance:PlayfieldRenderer)
     {
         return ClientPrefs.data.middleScroll;
     }
@@ -33,7 +33,7 @@ class ModchartUtil
     }
 
 
-    public static function getIsPixelStage(instance:states.PlayState)
+    public static function getIsPixelStage(instance:PlayfieldRenderer)
     {
         if (instance == null)
             return false;
@@ -41,7 +41,7 @@ class ModchartUtil
         return PlayState.isPixelStage;
     }
 
-    public static function getNoteOffsetX(daNote:Note, instance:ModchartMusicBeatState)
+    public static function getNoteOffsetX(daNote:Note, instance:PlayfieldRenderer)
     {
         return daNote.offsetX;
     }
