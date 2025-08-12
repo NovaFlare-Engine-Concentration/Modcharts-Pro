@@ -67,7 +67,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         super(0,0);
         this.strumGroup = strumGroup;
         this.notes = notes;
-        this.instance = instance;
+        this.instance = this;
         if (Std.isOfType(instance, PlayState))
             playStateInstance = cast instance; //so it just casts once
 
