@@ -55,11 +55,11 @@ class ModchartFuncs
             Lua_helper.add_callback(lua, 'removePlayfield', function(idx:Int){
                 removePlayfield(idx);
             });
-            Lua_helper.add_callback(lua, 'tweenModifier', function(modifier:String, val:Float, time:Float, ease:String, ?tag:String = null){
-                tweenModifier(modifier,val,time,ease,null,tag);
+            Lua_helper.add_callback(lua, 'tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
+                tweenModifier(modifier,val,time,ease);
             });
-            Lua_helper.add_callback(lua, 'tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String, ?tag:String = null){
-                tweenModifierSubValue(modifier,subValue,val,time,ease,null,tag);
+            Lua_helper.add_callback(lua, 'tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
+                tweenModifierSubValue(modifier,subValue,val,time,ease);
             });
             Lua_helper.add_callback(lua, 'setModEaseFunc', function(name:String, ease:String){
                 setModEaseFunc(name,ease);
@@ -67,8 +67,10 @@ class ModchartFuncs
             Lua_helper.add_callback(lua, 'set', function(beat:Float, argsAsString:String){
                 set(beat, argsAsString);
             });
-            Lua_helper.add_callback(lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String, ?tag:String = null){
-                ease(beat, time, easeStr, argsAsString, null, tag);                
+            Lua_helper.add_callback(lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+
+                ease(beat, time, easeStr, argsAsString);
+                
             });
        // }
         #end
