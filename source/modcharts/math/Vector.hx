@@ -11,7 +11,7 @@ typedef Quaternion =
     var w:Float;
 };
 //me whenthe
-class QuaternionMath
+class Vector
 {
     //no more gimbal lock fuck you
     public static function fromEuler(roll:Float, pitch:Float, yaw:Float) : Quaternion
