@@ -10,6 +10,7 @@ import modcharts.integration.ModchartUtil;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.FlxCamera;
 import states.PlayState;
 import objects.Note;
 import objects.StrumNote;
