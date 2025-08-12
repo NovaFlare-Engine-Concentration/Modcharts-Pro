@@ -41,7 +41,6 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 {
     public var strumGroup:FlxTypedGroup<StrumNoteType>;
     public var notes:FlxTypedGroup<Note>;
-    public var instance:PlayfieldRenderer;
     public var playStateInstance:PlayState;
     public var playfields:Array<Playfield> = []; //adding an extra playfield will add 1 for each player
 
@@ -67,15 +66,14 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         super(0,0);
         this.strumGroup = strumGroup;
         this.notes = notes;
-        this.instance = this;
         if (Std.isOfType(instance, PlayState))
             playStateInstance = cast instance; //so it just casts once
 
         strumGroup.visible = false; //drawing with renderer instead
         notes.visible = false;
 
-        //fix stupid crash because the renderer in playstate is still technically null at this point and its needed for json loading
-        instance.playfieldRenderer = this;
+        // //fix stupid crash because the renderer in playstate is still technically null at this point and its needed for json loading
+        // instance.playfieldRenderer = this;
 
         tweenManager = new FlxTweenManager();
         eventManager = new ModchartEventManager(this);
@@ -290,7 +288,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (noteData.alpha <= 0)
             return;
         var daNote = notes.members[noteData.index];
-        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(daNote.height/2), noteData.z*0.001), 
+        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNot), noteData.y+(daNote.height/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), -(daNote.height/2));
 
         noteData.x = thisNotePos.x;
@@ -323,7 +321,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         //makes the sustain match the center of the parent note when at weird angles
         var yOffsetThingy = (NoteMovement.arrowSizes[lane]/2);
 
-        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
+        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), yOffsetThingy-(NoteMovement.arrowSizes[noteData.lane]/2));
         
         var timeToNextSustain = ModchartUtil.getFakeCrochet()/4;
@@ -396,7 +394,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         //add offsets to data with modifiers
         modifierTable.applyNoteMods(noteData, lane, curPos, pf);
         var yOffsetThingy = (NoteMovement.arrowSizes[lane]/2);
-        var finalNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
+        var finalNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), yOffsetThingy-(NoteMovement.arrowSizes[noteData.lane]/2));
 
         noteData.x = finalNotePos.x;
