@@ -288,7 +288,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (noteData.alpha <= 0)
             return;
         var daNote = notes.members[noteData.index];
-        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNot), noteData.y+(daNote.height/2), noteData.z*0.001), 
+        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote), noteData.y+(daNote.height/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), -(daNote.height/2));
 
         noteData.x = thisNotePos.x;
