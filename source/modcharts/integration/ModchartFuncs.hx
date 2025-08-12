@@ -64,7 +64,7 @@ class ModchartFuncs
             Lua_helper.add_callback(lua, 'setModEaseFunc', function(name:String, ease:String){
                 setModEaseFunc(name,ease);
             });
-            Lua_helper.add_callback(ua, 'set', function(beat:Float, argsAsString:String){
+            Lua_helper.add_callback(lua, 'set', function(beat:Float, argsAsString:String){
                 set(beat, argsAsString);
             });
             Lua_helper.add_callback(lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String, ?tag:String = null){
