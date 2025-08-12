@@ -41,7 +41,7 @@ class ModchartUtil
         return PlayState.isPixelStage;
     }
 
-    public static function getNoteOffsetX(daNote:Note, instance:PlayfieldRenderer)
+    public static function getNoteOffsetX(daNote:Note)
     {
         return daNote.offsetX;
     }
