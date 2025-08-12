@@ -4,18 +4,26 @@ import modcharts.engine.PlayfieldRenderer;
 import modcharts.engine.ModTable;
 import modcharts.engine.ModchartEventManager;
 import modcharts.modifiers.Modifier;
+import modcharts.modifiers.Modifier.ModifierType;
+import modcharts.modifiers.Modifier.EaseCurveModifier;
 import modcharts.math.Playfield;
-import modcharts.integration.ModchartFuncs;
+import modcharts.math.NotePositionData;
 import modcharts.integration.ModchartUtil;
+import modcharts.integration.NoteMovement;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.FlxSprite;
+import flixel.math.FlxMath;
 import flixel.FlxCamera;
 import states.PlayState;
 import objects.Note;
 import objects.StrumNote;
+import backend.Conductor;
 
-class ModManager
+using StringTools;
+
+class ModManager extends FlxSprite
 {
     // 核心组件
     public var renderer:PlayfieldRenderer;
@@ -34,9 +42,11 @@ class ModManager
      */
     public function new(strumGroup:FlxTypedGroup<StrumNote>, notes:FlxTypedGroup<Note>, camera:FlxCamera, instance:PlayState) 
     {
+        super(0, 0);
         renderer = new PlayfieldRenderer(strumGroup, notes, instance);
         renderer.cameras = [camera];
         instance.add(renderer);
+        visible = false; // ModManager 本身不绘制，由 renderer 绘制
     }
     
     // ==================== 修饰符管理方法 ====================
@@ -50,7 +60,7 @@ class ModManager
      */
     public function addModifier(name:String, modClass:String, type:String = "ALL", playfield:Int = -1):Void
     {
-        ModchartFuncs.startMod(name, modClass, type, playfield, getPlayState());
+        startMod(name, modClass, type, playfield);
         modTable.reconstructTable();
     }
     
@@ -61,7 +71,7 @@ class ModManager
      */
     public function setModifier(name:String, value:Float):Void
     {
-        ModchartFuncs.setMod(name, value, getPlayState());
+        setMod(name, value);
     }
     
     /**
@@ -72,7 +82,7 @@ class ModManager
      */
     public function setSubModifier(name:String, subValueName:String, value:Float):Void
     {
-        ModchartFuncs.setSubMod(name, subValueName, value, getPlayState());
+        setSubMod(name, subValueName, value);
     }
     
     /**
@@ -82,7 +92,7 @@ class ModManager
      */
     public function setModifierTargetLane(name:String, lane:Int):Void
     {
-        ModchartFuncs.setModTargetLane(name, lane, getPlayState());
+        setModTargetLane(name, lane);
     }
     
     /**
@@ -92,7 +102,7 @@ class ModManager
      */
     public function setModifierPlayfield(name:String, playfield:Int):Void
     {
-        ModchartFuncs.setModPlayfield(name, playfield, getPlayState());
+        setModPlayfield(name, playfield);
     }
     
     /**
@@ -129,7 +139,7 @@ class ModManager
      */
     public function tweenModifier(modifier:String, value:Float, time:Float, ease:String = "linear"):Void
     {
-        ModchartFuncs.tweenModifier(modifier, value, time, ease, getPlayState());
+        tweenMod(modifier, value, time, ease);
     }
     
     /**
@@ -142,7 +152,7 @@ class ModManager
      */
     public function tweenSubModifier(modifier:String, subValue:String, value:Float, time:Float, ease:String = "linear"):Void
     {
-        ModchartFuncs.tweenModifierSubValue(modifier, subValue, value, time, ease, getPlayState());
+        tweenModSubValue(modifier, subValue, value, time, ease);
     }
     
     /**
@@ -152,7 +162,7 @@ class ModManager
      */
     public function setModifierEaseFunc(name:String, ease:String):Void
     {
-        ModchartFuncs.setModEaseFunc(name, ease, getPlayState());
+        setModEaseFunc(name, ease);
     }
     
     /**
@@ -193,7 +203,7 @@ class ModManager
      */
     public function addPlayfield(?x:Float = 0, ?y:Float = 0, ?z:Float = 0, ?alpha:Float = 1):Void
     {
-        ModchartFuncs.addPlayfield(x, y, z, alpha, getPlayState());
+        addPlayfieldInternal(x, y, z, alpha);
     }
     
     /**
@@ -202,7 +212,7 @@ class ModManager
      */
     public function removePlayfield(index:Int):Void
     {
-        ModchartFuncs.removePlayfield(index, getPlayState());
+        removePlayfieldInternal(index);
     }
     
     /**
@@ -243,7 +253,7 @@ class ModManager
      */
     public function addSetEvent(beat:Float, args:String):Void
     {
-        ModchartFuncs.set(beat, args, getPlayState());
+        setEvent(beat, args);
     }
     
     /**
@@ -255,7 +265,7 @@ class ModManager
      */
     public function addEaseEvent(beat:Float, time:Float, ease:String, args:String):Void
     {
-        ModchartFuncs.ease(beat, time, ease, args, getPlayState());
+        easeEvent(beat, time, ease, args);
     }
     
     /**
@@ -310,5 +320,166 @@ class ModManager
     public function setSpeed(speed:Float):Void
     {
         renderer.speed = speed;
+    }
+    
+    // ==================== 直接迁移的 ModchartFuncs 功能 ====================
+    
+    public function startMod(name:String, modClass:String, type:String = "", pf:Int = -1)
+    {
+        var instance:PlayState = getPlayState();
+        var mod = Type.resolveClass('modcharts.modifiers.' + modClass);
+        if (mod == null) {mod = Type.resolveClass('modcharts.modifiers.' + modClass + "Modifier");} //dont need to add "Modifier" to the end of every mod
+        
+        if (mod != null)
+        {
+            var modType = getModTypeFromString(type);
+            var modifier = Type.createInstance(mod, [name, modType, pf]);
+            instance.playfieldRenderer.modifierTable.add(modifier);
+        }
+    }
+    
+    public function getModTypeFromString(type:String)
+    {
+        var modType = ModifierType.ALL;
+        switch (type.toLowerCase())
+        {
+            case 'player':
+                modType = ModifierType.PLAYERONLY;
+            case 'opponent':
+                modType = ModifierType.OPPONENTONLY;
+            case 'lane' | 'lanespecific':
+                modType = ModifierType.LANESPECIFIC;
+        }
+        return modType;
+    }
+    
+    public function setMod(name:String, value:Float)
+    {
+        var instance:PlayState = getPlayState();
+        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+            instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue = value;
+    }
+    
+    public function setSubMod(name:String, subValName:String, value:Float)
+    {
+        var instance:PlayState = getPlayState();
+        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+            instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subValName).value = value;
+    }
+    
+    public function setModTargetLane(name:String, value:Int)
+    {
+        var instance:PlayState = getPlayState();
+        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+            instance.playfieldRenderer.modifierTable.modifiers.get(name).targetLane = value;
+    }
+    
+    public function setModPlayfield(name:String, value:Int)
+    {
+        var instance:PlayState = getPlayState();
+        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+            instance.playfieldRenderer.modifierTable.modifiers.get(name).playfield = value;
+    }
+    
+    public function addPlayfieldInternal(?x:Float = 0, ?y:Float = 0, ?z:Float = 0, ?alpha:Float = 1)
+    {
+        var instance:PlayState = getPlayState();
+        instance.playfieldRenderer.addNewPlayfield(x, y, z, alpha);
+    }
+    
+    public function removePlayfieldInternal(idx:Int)
+    {
+        var instance:PlayState = getPlayState();
+        instance.playfieldRenderer.playfields.remove(instance.playfieldRenderer.playfields[idx]);
+    }
+    
+    public function tweenMod(modifier:String, val:Float, time:Float, ease:String)
+    {
+        var instance:PlayState = getPlayState();
+        instance.playfieldRenderer.modifierTable.tweenModifier(modifier, val, time, ease, Modifier.beat);
+    }
+    
+    public function tweenModSubValue(modifier:String, subValue:String, val:Float, time:Float, ease:String)
+    {
+        var instance:PlayState = getPlayState();
+        instance.playfieldRenderer.modifierTable.tweenModifierSubValue(modifier, subValue, val, time, ease, Modifier.beat);
+    }
+    
+    public function setModEaseFunc(name:String, ease:String)
+    {
+        var instance:PlayState = getPlayState();
+        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+        {
+            var mod = instance.playfieldRenderer.modifierTable.modifiers.get(name);
+            if (Std.isOfType(mod, EaseCurveModifier))
+            {
+                var temp:Dynamic = mod;
+                var castedMod:EaseCurveModifier = temp;
+                castedMod.setEase(ease);
+            }
+        }
+    }
+    
+    public function setEvent(beat:Float, argsAsString:String)
+    {
+        var instance:PlayState = getPlayState();
+        var args = argsAsString.trim().replace(' ', '').split(',');
+        
+        instance.playfieldRenderer.eventManager.addEvent(beat, function(arguments:Array<String>) {
+            for (i in 0...Math.floor(arguments.length/2))
+            {
+                var name:String = Std.string(arguments[1 + (i*2)]);
+                var value:Float = Std.parseFloat(arguments[0 + (i*2)]);
+                if(Math.isNaN(value))
+                    value = 0;
+                if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                {
+                    instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue = value;
+                }
+                else 
+                {
+                    var subModCheck = name.split(':');
+                    if (subModCheck.length > 1)
+                    {
+                        var modName = subModCheck[0];
+                        var subModName = subModCheck[1];
+                        if (instance.playfieldRenderer.modifierTable.modifiers.exists(modName))
+                            instance.playfieldRenderer.modifierTable.modifiers.get(modName).subValues.get(subModName).value = value;
+                    }
+                }
+            }
+        }, args);
+    }
+    
+    public function easeEvent(beat:Float, time:Float, ease:String, argsAsString:String) : Void
+    {
+        var instance:PlayState = getPlayState();
+        
+        if(Math.isNaN(time))
+            time = 1;
+        
+        var args = argsAsString.trim().replace(' ', '').split(',');
+        
+        var func = function(arguments:Array<String>) {
+            
+            for (i in 0...Math.floor(arguments.length/2))
+            {
+                var name:String = Std.string(arguments[1 + (i*2)]);
+                var value:Float = Std.parseFloat(arguments[0 + (i*2)]);
+                if(Math.isNaN(value))
+                    value = 0;
+                var subModCheck = name.split(':');
+                if (subModCheck.length > 1)
+                {
+                    var modName = subModCheck[0];
+                    var subModName = subModCheck[1];
+                    //trace(subModCheck);
+                    instance.playfieldRenderer.modifierTable.tweenModifierSubValue(modName,subModName,value,time*Conductor.crochet*0.001,ease, beat);
+                }
+                else
+                    instance.playfieldRenderer.modifierTable.tweenModifier(name,value,time*Conductor.crochet*0.001,ease, beat);
+            }
+        };
+        instance.playfieldRenderer.eventManager.addEvent(beat, func, args);
     }
 }
