@@ -355,7 +355,7 @@ class StrumLineRotateModifier extends Modifier
                 upscroll = false;
 
         //var rot = ModchartUtil.getCartesianCoords3D(subValues.get('x').value, subValues.get('y').value, distFromCenter*NoteMovement.arrowSize);
-        var q = QuaternionMath.fromEuler(subValues.get('z').value, subValues.get('x').value, (upscroll ? -subValues.get('y').value : subValues.get('y').value)); //i think this is the right order???
+        var q = Vector.fromEuler(subValues.get('z').value, subValues.get('x').value, (upscroll ? -subValues.get('y').value : subValues.get('y').value)); //i think this is the right order???
         //q = SimpleQuaternion.normalize(q); //dont think its too nessessary???
         noteData.x += q.x * distFromCenter*NoteMovement.arrowSize;
         noteData.y += q.y * distFromCenter*NoteMovement.arrowSize;
