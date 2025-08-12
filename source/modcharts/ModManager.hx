@@ -36,7 +36,7 @@ class ModManager
     {
         renderer = new PlayfieldRenderer(strumGroup, notes, instance);
         renderer.cameras = [camera];
-        add(renderer);
+        instance.add(renderer);
     }
     
     // ==================== 修饰符管理方法 ====================
