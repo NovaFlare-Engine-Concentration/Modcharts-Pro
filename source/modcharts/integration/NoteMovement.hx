@@ -29,8 +29,8 @@ class NoteMovement
         defaultStrumY = []; 
         defaultScale = [];
         arrowSizes = [];
-        keyCount = #if (LEATHER || KADE) PlayState.strumLineNotes.length-PlayState.playerStrums.length #else game.strumLineNotes.length-game.playerStrums.length #end; //base game doesnt have opponent strums as group
-        playerKeyCount = #if (LEATHER || KADE) PlayState.playerStrums.length #else game.playerStrums.length #end;
+        keyCount = game.strumLineNotes.length-game.playerStrums.length; //base game doesnt have opponent strums as group
+        playerKeyCount = game.playerStrums.length;
 
         for (i in 0...game.strumLineNotes.members.length)
         {
