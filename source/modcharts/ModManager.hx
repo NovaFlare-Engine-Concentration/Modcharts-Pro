@@ -326,7 +326,7 @@ class ModManager extends FlxSprite
     
     public function startMod(name:String, modClass:String, type:String = "", pf:Int = -1)
     {
-        var instance:PlayState = getPlayState();
+
         var mod = Type.resolveClass('modcharts.modifiers.' + modClass);
         if (mod == null) {mod = Type.resolveClass('modcharts.modifiers.' + modClass + "Modifier");} //dont need to add "Modifier" to the end of every mod
         
@@ -334,7 +334,7 @@ class ModManager extends FlxSprite
         {
             var modType = getModTypeFromString(type);
             var modifier = Type.createInstance(mod, [name, modType, pf]);
-            instance.playfieldRenderer.modifierTable.add(modifier);
+            renderer.modifierTable.add(modifier);
         }
     }
     
@@ -355,62 +355,62 @@ class ModManager extends FlxSprite
     
     public function setMod(name:String, value:Float)
     {
-        var instance:PlayState = getPlayState();
-        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
-            instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue = value;
+
+        if (renderer.modifierTable.modifiers.exists(name))
+            renderer.modifierTable.modifiers.get(name).currentValue = value;
     }
     
     public function setSubMod(name:String, subValName:String, value:Float)
     {
-        var instance:PlayState = getPlayState();
-        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
-            instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subValName).value = value;
+
+        if (renderer.modifierTable.modifiers.exists(name))
+            renderer.modifierTable.modifiers.get(name).subValues.get(subValName).value = value;
     }
     
     public function setModTargetLane(name:String, value:Int)
     {
-        var instance:PlayState = getPlayState();
-        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
-            instance.playfieldRenderer.modifierTable.modifiers.get(name).targetLane = value;
+
+        if (renderer.modifierTable.modifiers.exists(name))
+            renderer.modifierTable.modifiers.get(name).targetLane = value;
     }
     
     public function setModPlayfield(name:String, value:Int)
     {
-        var instance:PlayState = getPlayState();
-        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
-            instance.playfieldRenderer.modifierTable.modifiers.get(name).playfield = value;
+
+        if (renderer.modifierTable.modifiers.exists(name))
+            renderer.modifierTable.modifiers.get(name).playfield = value;
     }
     
     public function addPlayfieldInternal(?x:Float = 0, ?y:Float = 0, ?z:Float = 0, ?alpha:Float = 1)
     {
-        var instance:PlayState = getPlayState();
-        instance.playfieldRenderer.addNewPlayfield(x, y, z, alpha);
+
+        renderer.addNewPlayfield(x, y, z, alpha);
     }
     
     public function removePlayfieldInternal(idx:Int)
     {
-        var instance:PlayState = getPlayState();
-        instance.playfieldRenderer.playfields.remove(instance.playfieldRenderer.playfields[idx]);
+
+        renderer.playfields.remove(renderer.playfields[idx]);
     }
     
     public function tweenMod(modifier:String, val:Float, time:Float, ease:String)
     {
-        var instance:PlayState = getPlayState();
-        instance.playfieldRenderer.modifierTable.tweenModifier(modifier, val, time, ease, Modifier.beat);
+
+        renderer.modifierTable.tweenModifier(modifier, val, time, ease, Modifier.beat);
     }
     
     public function tweenModSubValue(modifier:String, subValue:String, val:Float, time:Float, ease:String)
     {
-        var instance:PlayState = getPlayState();
-        instance.playfieldRenderer.modifierTable.tweenModifierSubValue(modifier, subValue, val, time, ease, Modifier.beat);
+
+        renderer.modifierTable.tweenModifierSubValue(modifier, subValue, val, time, ease, Modifier.beat);
     }
     
     public function setModEaseFunc(name:String, ease:String)
     {
-        var instance:PlayState = getPlayState();
-        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+
+        if (renderer.modifierTable.modifiers.exists(name))
         {
-            var mod = instance.playfieldRenderer.modifierTable.modifiers.get(name);
+            var mod = renderer.modifierTable.modifiers.get(name);
             if (Std.isOfType(mod, EaseCurveModifier))
             {
                 var temp:Dynamic = mod;
@@ -422,19 +422,19 @@ class ModManager extends FlxSprite
     
     public function setEvent(beat:Float, argsAsString:String)
     {
-        var instance:PlayState = getPlayState();
+
         var args = argsAsString.trim().replace(' ', '').split(',');
         
-        instance.playfieldRenderer.eventManager.addEvent(beat, function(arguments:Array<String>) {
+        renderer.eventManager.addEvent(beat, function(arguments:Array<String>) {
             for (i in 0...Math.floor(arguments.length/2))
             {
                 var name:String = Std.string(arguments[1 + (i*2)]);
                 var value:Float = Std.parseFloat(arguments[0 + (i*2)]);
                 if(Math.isNaN(value))
                     value = 0;
-                if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                if (renderer.modifierTable.modifiers.exists(name))
                 {
-                    instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue = value;
+                    renderer.modifierTable.modifiers.get(name).currentValue = value;
                 }
                 else 
                 {
@@ -443,8 +443,8 @@ class ModManager extends FlxSprite
                     {
                         var modName = subModCheck[0];
                         var subModName = subModCheck[1];
-                        if (instance.playfieldRenderer.modifierTable.modifiers.exists(modName))
-                            instance.playfieldRenderer.modifierTable.modifiers.get(modName).subValues.get(subModName).value = value;
+                        if (renderer.modifierTable.modifiers.exists(modName))
+                            renderer.modifierTable.modifiers.get(modName).subValues.get(subModName).value = value;
                     }
                 }
             }
@@ -453,7 +453,7 @@ class ModManager extends FlxSprite
     
     public function easeEvent(beat:Float, time:Float, ease:String, argsAsString:String) : Void
     {
-        var instance:PlayState = getPlayState();
+
         
         if(Math.isNaN(time))
             time = 1;
@@ -474,12 +474,12 @@ class ModManager extends FlxSprite
                     var modName = subModCheck[0];
                     var subModName = subModCheck[1];
                     //trace(subModCheck);
-                    instance.playfieldRenderer.modifierTable.tweenModifierSubValue(modName,subModName,value,time*Conductor.crochet*0.001,ease, beat);
+                    renderer.modifierTable.tweenModifierSubValue(modName,subModName,value,time*Conductor.crochet*0.001,ease, beat);
                 }
                 else
-                    instance.playfieldRenderer.modifierTable.tweenModifier(name,value,time*Conductor.crochet*0.001,ease, beat);
+                    renderer.modifierTable.tweenModifier(name,value,time*Conductor.crochet*0.001,ease, beat);
             }
         };
-        instance.playfieldRenderer.eventManager.addEvent(beat, func, args);
+        renderer.eventManager.addEvent(beat, func, args);
     }
 }
