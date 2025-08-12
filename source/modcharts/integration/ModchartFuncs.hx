@@ -31,7 +31,7 @@ class ModchartFuncs
         #if LUA_ALLOWED
         //for (funkin in Luanb)
         //{
-            var lua = funk.lua
+            var lua = funk.lua;
             Lua_helper.add_callback(lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                 startMod(name,modClass,type,pf);
 
