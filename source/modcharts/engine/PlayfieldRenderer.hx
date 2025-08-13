@@ -91,7 +91,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     {
         eventManager.update(elapsed);
         // Only update tween manager if the game is not paused
-        if (FlxG.state != null && !FlxG.state.paused) {
+        if (FlxG.state != null && !FlxG.autoPause) {
             tweenManager.update(elapsed);
         }
         super.update(elapsed);
