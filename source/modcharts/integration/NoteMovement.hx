@@ -20,6 +20,8 @@ class NoteMovement
     public static var arrowSize:Float = 112;
     public static var defaultStrumX:Array<Float> = [];
     public static var defaultStrumY:Array<Float> = [];
+    public static var defaultSkewX:Array<Float> = [];
+    public static var defaultSkewY:Array<Float> = [];
     public static var defaultScale:Array<Float> = [];
     public static var arrowSizes:Array<Float> = [];
 
@@ -27,6 +29,8 @@ class NoteMovement
     {
         defaultStrumX = []; //reset
         defaultStrumY = []; 
+        defaultSkewX = [];
+        defaultSkewY = []; 
         defaultScale = [];
         arrowSizes = [];
         keyCount = game.strumLineNotes.length-game.playerStrums.length; //base game doesnt have opponent strums as group
@@ -35,15 +39,42 @@ class NoteMovement
         for (i in 0...game.strumLineNotes.members.length)
         {
             var strum = game.strumLineNotes.members[i];
+            defaultSkewX.push(strum.skew.x);
+            defaultSkewY.push(strum.skew.y);
             defaultStrumX.push(strum.x);
             defaultStrumY.push(strum.y);
             var s = 0.7;
+
             defaultScale.push(s);
             arrowSizes.push(160*s);
         }
         totalKeyCount = keyCount + playerKeyCount;
     }
-    
+    public static function getDefaultStrumPosEditor(game:modcharting.ModchartEditorState)
+    {
+        defaultStrumX = []; //reset
+        defaultStrumY = []; 
+        defaultSkewX = [];
+        defaultSkewY = [];
+        defaultScale = [];
+        arrowSizes = [];
+        keyCount = game.strumLineNotes.length-game.playerStrums.length; //base game doesnt have opponent strums as group
+        playerKeyCount = game.playerStrums.length;
+
+
+        for (i in 0...game.strumLineNotes.members.length)
+        {
+            var strum = game.strumLineNotes.members[i];
+            defaultSkewX.push(strum.skew.x);
+            defaultSkewY.push(strum.skew.y);
+            defaultStrumX.push(strum.x);
+            defaultStrumY.push(strum.y);
+            var s = 0.7;
+            
+            defaultScale.push(s);
+            arrowSizes.push(160*s);
+        }
+    }
     public static function setNotePath(daNote:Note, lane:Int, scrollSpeed:Float, curPos:Float, noteDist:Float, incomingAngleX:Float, incomingAngleY:Float)
     {
         daNote.x = defaultStrumX[lane];
@@ -54,6 +85,9 @@ class NoteMovement
         daNote.y += pos.y;
         daNote.x += pos.x;
         daNote.z += pos.z;
+
+        daNote.skew.x = defaultSkewX[lane];
+        daNote.skew.y = defaultSkewY[lane];
     }
 
     public static function getLaneDiffFromCenter(lane:Int)
@@ -77,4 +111,3 @@ class NoteMovement
 
 
 }
-
