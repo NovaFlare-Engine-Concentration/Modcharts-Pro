@@ -336,6 +336,14 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         daNote.alpha = noteData.alpha;
         daNote.mesh.alpha = daNote.alpha;
 
+        // Check if game is paused to prevent state corruption
+        if ((FlxG.state != null && FlxG.autoPause) || editorPaused) {
+            // Don't update mesh when game is paused to prevent state corruption
+            daNote.mesh.cameras = this.cameras;
+            daNote.mesh.draw();
+            return;
+        }
+
         var songSpeed = getCorrectScrollSpeed();
         var lane = noteData.lane;
         
