@@ -2,6 +2,7 @@ package modcharts.engine;
 
 import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
+import flixel.FlxG;
 import modcharts.modifiers.Modifier;
 import modcharts.math.NotePositionData;
 import backend.Conductor;
