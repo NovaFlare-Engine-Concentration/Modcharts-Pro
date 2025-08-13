@@ -291,18 +291,6 @@ class ModManager extends FlxSprite
      * 更新管理器
      * @param elapsed 经过的时间
      */
-    override public function update(elapsed:Float):Void
-    {
-        renderer.update(elapsed);
-    }
-    
-    /**
-     * 绘制管理器
-     */
-    override public function draw():Void
-    {
-        renderer.draw();
-    }
     
     /**
      * 设置编辑器模式
