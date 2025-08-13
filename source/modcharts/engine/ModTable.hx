@@ -181,8 +181,12 @@ class ModTable
                 @:privateAccess
                 tween.update(0);
             }
-            if (renderer.editorPaused)
+            // Check if the game is paused and set the tween's active state accordingly
+            if (FlxG.state != null && FlxG.state.paused) {
                 tween.active = false;
+            } else if (renderer.editorPaused) {
+                tween.active = false;
+            }
         }
     }
 
