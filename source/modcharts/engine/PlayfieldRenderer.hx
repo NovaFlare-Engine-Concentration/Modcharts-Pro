@@ -111,7 +111,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     }
 
 
-    private function addDataToStrum(strumData:NotePositionData, strum:FlxSprite)
+    private function addDataToStrum(strumData:NotePositionData, strum:StrumNoteType)
     {
         strum.x = strumData.x;
         strum.y = strumData.y;
@@ -129,14 +129,16 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var strumZ = 0;
         var strumScaleX = NoteMovement.defaultScale[i];
         var strumScaleY = NoteMovement.defaultScale[i];
-        if (ModchartUtil.getIsPixelStage(playStateInstance))
+        var strumSkewX = NoteMovement.defaultSkewX[i];
+        var strumSkewY = NoteMovement.defaultSkewY[i];
+        if (ModchartUtil.getIsPixelStage(instance))
         {
             //work on pixel stages
             strumScaleX = 1*PlayState.daPixelZoom;
             strumScaleY = 1*PlayState.daPixelZoom;
         }
         var strumData:NotePositionData = NotePositionData.get();
-        strumData.setupStrum(strumX, strumY, strumZ, i, strumScaleX, strumScaleY, pf);
+        strumData.setupStrum(strumX, strumY, strumZ, i, strumScaleX, strumScaleY, strumSkewX, strumSkewY, pf);
         playfields[pf].applyOffsets(strumData);
         modifierTable.applyStrumMods(strumData, i, pf);
         return strumData;
@@ -144,7 +146,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
    
 
-    private function addDataToNote(noteData:NotePositionData, daNote:Note)
+   private function addDataToNote(noteData:NotePositionData, daNote:Note)
     {
         daNote.x = noteData.x;
         daNote.y = noteData.y;
@@ -153,6 +155,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         daNote.alpha = noteData.alpha;
         daNote.scale.x = noteData.scaleX;
         daNote.scale.y = noteData.scaleY;
+        daNote.skew.x = noteData.skewX;
+        daNote.skew.y = noteData.skewY;
     }
     private function createDataFromNote(noteIndex:Int, playfieldIndex:Int, curPos:Float, noteDist:Float, incomingAngle:Array<Float>)
     {
@@ -162,11 +166,12 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var lane = getLane(noteIndex);
         var noteScaleX = NoteMovement.defaultScale[lane];
         var noteScaleY = NoteMovement.defaultScale[lane];
+        var noteSkewX = notes.members[noteIndex].skew.x;
+        var noteSkewY = notes.members[noteIndex].skew.y;
 
-        var noteAlpha:Float = 1;
-        noteAlpha = notes.members[noteIndex].multAlpha;
+        var noteAlpha:Float = notes.members[noteIndex].multAlpha;
 
-        if (ModchartUtil.getIsPixelStage(playStateInstance))
+        if (ModchartUtil.getIsPixelStage(instance))
         {
             //work on pixel stages
             noteScaleX = 1*PlayState.daPixelZoom;
@@ -174,10 +179,9 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         }
 
         var noteData:NotePositionData = NotePositionData.get();
-        noteData.setupNote(noteX, noteY, noteZ, lane, noteScaleX, noteScaleY, playfieldIndex, noteAlpha, 
+        noteData.setupNote(noteX, noteY, noteZ, lane, noteScaleX, noteScaleY, noteSkewX, noteSkewY, playfieldIndex, noteAlpha, 
             curPos, noteDist, incomingAngle[0], incomingAngle[1], notes.members[noteIndex].strumTime, noteIndex);
         playfields[playfieldIndex].applyOffsets(noteData);
-
         return noteData;
     }
 
@@ -272,32 +276,46 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     {
         if (noteData.alpha <= 0)
             return;
+        var changeX:Bool = ((noteData.z > 0 || noteData.z < 0) && noteData.z != 0);
         var strumNote = strumGroup.members[noteData.index];
-        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(strumNote.width/2), noteData.y+(strumNote.height/2), noteData.z*0.001), 
-        ModchartUtil.defaultFOV*(Math.PI/180), -(strumNote.width/2), -(strumNote.height/2));
-
+        var thisNotePos = changeX ?
+            ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(strumNote.width/2), noteData.y+(strumNote.height/2), noteData.z*0.001), 
+            ModchartUtil.defaultFOV*(Math.PI/180), -(strumNote.width/2), -(strumNote.height/2))
+            : new Vector3D(noteData.x, noteData.y, 0);
+        
         noteData.x = thisNotePos.x;
         noteData.y = thisNotePos.y;
-        noteData.scaleX *= (1/-thisNotePos.z);
-        noteData.scaleY *= (1/-thisNotePos.z);
+        if (changeX) {
+            noteData.scaleX *= (1/-thisNotePos.z);
+            noteData.scaleY *= (1/-thisNotePos.z);
+        }
+        // noteData.skewX = skewX + noteData.skewX;
+        // noteData.skewY = skewY + noteData.skewY;
 
         addDataToStrum(noteData, strumGroup.members[noteData.index]); //set position and stuff before drawing
         strumGroup.members[noteData.index].cameras = this.cameras;
 
         strumGroup.members[noteData.index].draw();
     }
-    private function drawNote(noteData:NotePositionData)
+     private function drawNote(noteData:NotePositionData)
     {
         if (noteData.alpha <= 0)
             return;
+        var changeX:Bool = ((noteData.z > 0 || noteData.z < 0) && noteData.z != 0);
         var daNote = notes.members[noteData.index];
-        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote), noteData.y+(daNote.height/2), noteData.z*0.001), 
-        ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), -(daNote.height/2));
+        var thisNotePos = changeX ?
+            ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(daNote.height/2), noteData.z*0.001), 
+            ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), -(daNote.height/2))
+            : new Vector3D(noteData.x, noteData.y, 0);
 
         noteData.x = thisNotePos.x;
         noteData.y = thisNotePos.y;
-        noteData.scaleX *= (1/-thisNotePos.z);
-        noteData.scaleY *= (1/-thisNotePos.z);
+        if (changeX) {
+            noteData.scaleX *= (1/-thisNotePos.z);
+            noteData.scaleY *= (1/-thisNotePos.z);
+        }
+        // noteData.skewX = skewX + noteData.skewX;
+        // noteData.skewY = skewY + noteData.skewY;
         //set note position using the position data
         addDataToNote(noteData, notes.members[noteData.index]); 
         //make sure it draws on the correct camera
@@ -305,7 +323,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         //draw it
         notes.members[noteData.index].draw();
     }
-    private function drawSustainNote(noteData:NotePositionData)
+     private function drawSustainNote(noteData:NotePositionData)
     {
         if (noteData.alpha <= 0)
             return;
@@ -324,15 +342,16 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         //makes the sustain match the center of the parent note when at weird angles
         var yOffsetThingy = (NoteMovement.arrowSizes[lane]/2);
 
-        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
+        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), yOffsetThingy-(NoteMovement.arrowSizes[noteData.lane]/2));
         
         var timeToNextSustain = ModchartUtil.getFakeCrochet()/4;
         if (noteData.noteDist < 0)
-            timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
+            timeToNextSustain *= -1; //weird shit that fixes upscroll lol
+            // timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
 
-        var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain*0.5);
-        var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
+        var nextHalfNotePos = ModchartUtil.getDownscroll(instance) ? getSustainPoint(noteData, timeToNextSustain*0.458) : getSustainPoint(noteData, timeToNextSustain*0.548);
+        var nextNotePos = ModchartUtil.getDownscroll(instance) ? getSustainPoint(noteData, timeToNextSustain+2.2) : getSustainPoint(noteData, timeToNextSustain-2.2);
 
         var flipGraphic = false;
 
@@ -343,12 +362,12 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
         if (noteData.noteDist > 0) //downscroll
         {
-            if (!ModchartUtil.getDownscroll(playStateInstance)) //fix reverse
+            if (!ModchartUtil.getDownscroll(instance)) //fix reverse
                 flipGraphic = true;
         }
         else
         {
-            if (ModchartUtil.getDownscroll(playStateInstance))
+            if (ModchartUtil.getDownscroll(instance))
                 flipGraphic = true;
         }
         //render that shit
@@ -397,7 +416,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         //add offsets to data with modifiers
         modifierTable.applyNoteMods(noteData, lane, curPos, pf);
         var yOffsetThingy = (NoteMovement.arrowSizes[lane]/2);
-        var finalNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
+        var finalNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), yOffsetThingy-(NoteMovement.arrowSizes[noteData.lane]/2));
 
         noteData.x = finalNotePos.x;
@@ -414,6 +433,39 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         else
             return ModchartUtil.getScrollSpeed(playStateInstance);
         return 1.0; 
+    }
+
+    public function createTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
+    {
+        var tween:FlxTween = tweenManager.tween(Object, Values, Duration, Options);
+        tween.manager = tweenManager;
+        return tween;
+    }
+    
+    public function createTweenNum(FromValue:Float, ToValue:Float, Duration:Float = 1, ?Options:TweenOptions, ?TweenFunction:Float->Void):FlxTween
+    {
+        var tween:FlxTween = tweenManager.num(FromValue, ToValue, Duration, Options, TweenFunction);
+        tween.manager = tweenManager;
+        return tween;
+    }
+    
+    public function createBezierPathTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
+    {
+        var tween:FlxTween = tweenManager.bezierPathTween(Object, Values, Duration, Options);
+        tween.manager = tweenManager;
+        return tween;
+    }
+    
+    public function createBezierPathNumTween(Points:Array<Float>, Duration:Float, ?Options:TweenOptions, ?TweenFunction:Float->Void):FlxTween
+    {
+        var tween:FlxTween = tweenManager.bezierPathNumTween(Points, Duration, Options,TweenFunction);
+        tween.manager = tweenManager;
+        return tween;
+    }
+
+    override public function destroy()
+    {
+        super.destroy();
     }
 
 }
