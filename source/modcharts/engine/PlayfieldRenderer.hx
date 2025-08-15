@@ -197,7 +197,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     {
         var noteDist = -0.45;
         if (ModchartUtil.getDownscroll(playStateInstance))
-            noteDist *= -1.5;
+            noteDist *= -0.95;
         return noteDist;
     }
 
