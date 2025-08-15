@@ -409,11 +409,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
     public function getCorrectScrollSpeed()
     {
-        if (inEditor)
-            return PlayState.SONG.speed; //just use this while in editor so the instance shit works
-        else
             return ModchartUtil.getScrollSpeed(playStateInstance);
-        return 1.0; 
     }
 
 }
