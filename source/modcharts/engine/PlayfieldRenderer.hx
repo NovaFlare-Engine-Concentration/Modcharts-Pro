@@ -307,57 +307,78 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     }
     private function drawSustainNote(noteData:NotePositionData)
     {
+        // 提前返回，如果alpha为0则不需要绘制
         if (noteData.alpha <= 0)
             return;
+    
         var daNote = notes.members[noteData.index];
+        // 如果mesh不存在，则创建
         if (daNote.mesh == null)
             daNote.mesh = new SustainStrip(daNote);
-
+    
+        // 设置scrollFactor和alpha
         daNote.mesh.scrollFactor.x = daNote.scrollFactor.x;
         daNote.mesh.scrollFactor.y = daNote.scrollFactor.y;
         daNote.alpha = noteData.alpha;
         daNote.mesh.alpha = daNote.alpha;
-
+    
+        // 获取歌曲速度，这个值可能在同一帧内多次调用时不变，但这里我们假设每次调用都需要最新的
         var songSpeed = getCorrectScrollSpeed();
         var lane = noteData.lane;
         
-        //makes the sustain match the center of the parent note when at weird angles
-        var yOffsetThingy = (NoteMovement.arrowSizes[lane]/2);
-
-        var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote), noteData.y+(NoteMovement.arrowSizes[noteData.lane]/2), noteData.z*0.001), 
-        ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), yOffsetThingy-(NoteMovement.arrowSizes[noteData.lane]/2));
-        
-        var timeToNextSustain = ModchartUtil.getFakeCrochet()/4;
+        // 计算y偏移量，这个值在同一个lane下是固定的，可以考虑缓存，但这里我们直接计算
+        var yOffsetThingy = NoteMovement.arrowSizes[lane] * 0.5;
+    
+        // 计算当前音符位置
+        var thisNotePos = ModchartUtil.calculatePerspective(
+            new Vector3D(
+                noteData.x + (daNote.width * 0.5) + ModchartUtil.getNoteOffsetX(daNote),
+                noteData.y + yOffsetThingy,
+                noteData.z * 0.001
+            ),
+            ModchartUtil.defaultFOV * (Math.PI / 180),
+            -(daNote.width * 0.5),
+            yOffsetThingy - yOffsetThingy // 注意：这里原代码是 yOffsetThingy - (NoteMovement.arrowSizes[noteData.lane]/2) 等于 yOffsetThingy - yOffsetThingy = 0
+        );
+        // 修正：原代码中最后一个参数是 yOffsetThingy - (NoteMovement.arrowSizes[noteData.lane]/2) 即0，所以这里直接写0
+        // 但为了保持原意，我们还是按照原代码计算，因为yOffsetThingy就是NoteMovement.arrowSizes[lane]/2，所以减去自己就是0。
+    
+        // 计算时间间隔
+        var crochet = ModchartUtil.getFakeCrochet();
+        var timeToNextSustain = crochet * 0.25;
         if (noteData.noteDist < 0)
-            timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
-
-        var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain*0.5);
+            timeToNextSustain = -timeToNextSustain; // 修正上滚
+    
+        // 计算下一个半音符位置和下一个音符位置
+        var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain * 0.5);
         var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
-
-        var flipGraphic = false;
-
-        // mod/bound to 360, add 360 for negative angles, mod again just in case
-        var fixedAngY = ((noteData.incomingAngleY%360)+360)%360;
-
+    
+        // 计算角度并归一化到0-360
+        var fixedAngY = noteData.incomingAngleY % 360;
+        if (fixedAngY < 0) fixedAngY += 360;
+    
+        // 判断是否需要反转裁剪
         var reverseClip = (fixedAngY > 90 && fixedAngY < 270);
-
-        if (noteData.noteDist > 0) //downscroll
+    
+        // 判断是否需要翻转图形
+        var flipGraphic = false;
+        var isDownscroll = ModchartUtil.getDownscroll(playStateInstance);
+        if (noteData.noteDist > 0) // 下滚
         {
-            if (!ModchartUtil.getDownscroll(playStateInstance)) //fix reverse
+            if (!isDownscroll)
                 flipGraphic = true;
         }
-        else
+        else // 上滚
         {
-            if (ModchartUtil.getDownscroll(playStateInstance))
+            if (isDownscroll)
                 flipGraphic = true;
         }
-        //render that shit
+    
+        // 构造顶点并绘制
         daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
-
         daNote.mesh.cameras = this.cameras;
         daNote.mesh.draw();
     }
-
     private function drawStuff(notePositions:Array<NotePositionData>)
     {
         for (noteData in notePositions)
